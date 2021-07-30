@@ -1,0 +1,105 @@
+CREATE DATABASE IF NOT EXISTS crm;
+USE crm;
+CREATE TABLE IF NOT EXISTS role(
+	id int(10),
+    name varchar(255) not null,
+    description varchar(255),
+    primary key(id)
+);
+
+CREATE TABLE IF NOT EXISTS user(
+	id int(10),
+    email varchar(255) unique,
+    password varchar(255) not null,
+    name varchar(255) not null,
+    address varchar(255),
+    phone varchar(50),
+    role_id int(10),
+    primary key(id)
+);
+
+CREATE TABLE IF NOT EXISTS project(
+	id int(10),
+    name varchar(255) not null,
+    description varchar(255),
+    start_date date,
+	end_date date,
+    owner int(10) not null,
+    primary key(id)
+);
+
+CREATE TABLE IF NOT EXISTS project_user(
+	project_id int(10),
+    user_id int(10),
+    join_date date,
+    role_description varchar(255),
+    primary key(project_id, user_id)
+);
+
+CREATE TABLE IF NOT EXISTS status(
+	id int(10),
+    name varchar(255) not null,
+    description varchar(255),
+    primary key(id)
+);
+
+CREATE TABLE IF NOT EXISTS task(
+	id int(10),
+    name varchar(255) not null,
+    description varchar(255),
+	start_date date,
+	end_date date,
+    status_id int(10),
+    user_id int(10),
+    project_id int(10),
+    primary key(id)
+);
+
+ALTER TABLE `crm`.`user` 
+CHANGE COLUMN `id` `id` INT NOT NULL AUTO_INCREMENT ;
+ALTER TABLE `crm`.`role` 
+CHANGE COLUMN `id` `id` INT NOT NULL AUTO_INCREMENT ;
+ALTER TABLE `crm`.`task` 
+CHANGE COLUMN `id` `id` INT NOT NULL AUTO_INCREMENT ;
+ALTER TABLE `crm`.`status` 
+CHANGE COLUMN `id` `id` INT NOT NULL AUTO_INCREMENT ;
+ALTER TABLE `crm`.`project` 
+CHANGE COLUMN `id` `id` INT NOT NULL AUTO_INCREMENT ;
+
+ALTER TABLE user ADD CONSTRAINT FK_USER_ROLE FOREIGN KEY (role_id) REFERENCES role (id);
+ALTER TABLE project ADD CONSTRAINT FK_PROJECT_USER_OWNER FOREIGN KEY (owner) REFERENCES user (id);
+ALTER TABLE project_user ADD CONSTRAINT FK_PROJECT_USER_PROJECT_USER_LIST FOREIGN KEY (project_id) REFERENCES project (id);
+ALTER TABLE project_user ADD CONSTRAINT FK_PROJECT_USER_USER_USER_LIST FOREIGN KEY (user_id) REFERENCES user (id);
+ALTER TABLE task ADD CONSTRAINT FK_TASK_PROJECT FOREIGN KEY (project_id) REFERENCES project (id);
+ALTER TABLE task ADD CONSTRAINT FK_TASK_STATUS FOREIGN KEY (status_id) REFERENCES status (id);
+ALTER TABLE task ADD CONSTRAINT FK_TASK_USER FOREIGN KEY (user_id) REFERENCES user (id);
+
+
+INSERT INTO `crm`.`role` (`id`, `name`) VALUES ('1', 'admin');
+INSERT INTO `crm`.`role` (`id`, `name`) VALUES ('2', 'leader');
+INSERT INTO `crm`.`role` (`id`, `name`) VALUES ('3', 'member');
+
+INSERT INTO `crm`.`user` (`id`, `email`, `password`, `name`, `address`, `phone`, `role_id`) VALUES ('1', 'admin@gmail.com', '1234', 'Nguyen Van A', 'Binh Thanh', '033123213', '1');
+INSERT INTO `crm`.`user` (`id`, `email`, `password`, `name`, `address`, `phone`, `role_id`) VALUES ('2', 'nhattan87264@gmail.com', '1234', 'Duong Nhat Tan', 'Binh Duong', '0333816363', '2');
+INSERT INTO `crm`.`user` (`id`, `email`, `password`, `name`, `address`, `phone`, `role_id`) VALUES ('3', 'MinhTra@gmail.com', '1234', 'Tra Huu Minh', 'Quan 1', '03338123213', '2');
+INSERT INTO `crm`.`user` (`id`, `email`, `password`, `name`, `address`, `phone`, `role_id`) VALUES ('4', 'HieuVo@gmail.com', '1234', 'Vo Anh Hieu', 'Quan Thu Duc', '0353256363', '2');
+
+INSERT INTO `crm`.`project` (`name`, `description`, `start_date`, `end_date`, `owner`) VALUES ('project1', 'des11', '2021-07-29', '2021-08-30', '1');
+INSERT INTO `crm`.`project` (`name`, `description`, `start_date`, `end_date`, `owner`) VALUES ('project2', 'des11', '2021-07-29', '2021-08-30', '1');
+INSERT INTO `crm`.`project` (`name`, `description`, `start_date`, `end_date`, `owner`) VALUES ('project3', 'des11', '2021-07-29', '2021-08-30', '1');
+INSERT INTO `crm`.`project` (`name`, `description`, `start_date`, `end_date`, `owner`) VALUES ('project4', 'des11', '2021-07-29', '2021-08-30', '2');
+INSERT INTO `crm`.`project` (`name`, `description`, `start_date`, `end_date`, `owner`) VALUES ('project5', 'des11', '2021-07-29', '2021-08-30', '2');
+
+INSERT INTO `crm`.`project_user` (`project_id`, `user_id`, `join_date`) VALUES ('1', '1', '2021-07-30');
+INSERT INTO `crm`.`project_user` (`project_id`, `user_id`, `join_date`) VALUES ('1', '2', '2021-07-30');
+INSERT INTO `crm`.`project_user` (`project_id`, `user_id`, `join_date`) VALUES ('1', '3', '2021-07-30');
+
+INSERT INTO `crm`.`status` (`name`) VALUES ('Not Started');
+INSERT INTO `crm`.`status` (`name`) VALUES ('In Progress');
+INSERT INTO `crm`.`status` (`name`) VALUES ('Complete');
+
+INSERT INTO `crm`.`task` (`name`, `start_date`, `end_date`, `status_id`, `user_id`, `project_id`) VALUES ('task1', '2021-07-18', '2021-08-2', '3', '2', '1');
+INSERT INTO `crm`.`task` (`name`, `start_date`, `end_date`, `status_id`, `user_id`, `project_id`) VALUES ('task2', '2021-07-20', '2021-08-6', '2', '1', '2');
+INSERT INTO `crm`.`task` (`name`, `start_date`, `end_date`, `status_id`, `user_id`, `project_id`) VALUES ('task3', '2021-07-24', '2021-08-15', '2', '4', '3');
+INSERT INTO `crm`.`task` (`name`, `start_date`, `end_date`, `status_id`, `user_id`, `project_id`) VALUES ('task4', '2021-07-30', '2021-08-30', '1', '2', '1');
+INSERT INTO `crm`.`task` (`name`, `start_date`, `end_date`, `status_id`, `user_id`, `project_id`) VALUES ('task5', '2021-07-15', '2021-08-26', '1', '3', '3');
